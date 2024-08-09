@@ -171,11 +171,7 @@ export default function PreviewArea() {
 
   return (
     <div className="flex-none w-full">
-      <div className="flex flex-row p-4 gap-4 justify-between pr-6">
-        <div className='h-8 w-20 flex items-center justify-center'>
-          <img src='/scratch.png' alt="Scratch Logo" className='h-full w-full object-contain' />
-        </div>
-        <div className='flex flex-row gap-4 justify-end z-10'>
+      <div className="flex flex-row p-4 gap-4 justify-end pr-6 z-10">
           {history.length > 0 && (
             <div
               onClick={undoAction}
@@ -191,7 +187,8 @@ export default function PreviewArea() {
             title={"Run"}
             className={`cursor-pointer self-center ${playing ? "pointer-events-none" : ""}`}
           >
-            <Flag fill={playing ? "gray" : "green"} color='green' />
+            
+            <Flag fill={playing ? "gray" : "#00ff11"} color='#00ff11' />
           </div>
 
           <div
@@ -199,7 +196,7 @@ export default function PreviewArea() {
             title='Reset'
             className='cursor-pointer self-center'
           >
-            <RotateCcw />
+            <RotateCcw color='white'/>
           </div>
           {/* <div
           onClick={stop}
@@ -215,7 +212,6 @@ export default function PreviewArea() {
           >
             <Github />
           </div>
-        </div>
 
       </div>
       <Draggable className="h-[calc(100vh_-_4rem)] overflow-y-auto p-2 relative border">
