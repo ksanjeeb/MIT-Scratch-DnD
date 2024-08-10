@@ -198,13 +198,6 @@ export default function PreviewArea() {
           >
             <RotateCcw color='white'/>
           </div>
-          {/* <div
-          onClick={stop}
-          title='Stop'
-          className='cursor-pointer self-center'
-        >
-          <StopCircle />
-        </div> */}
           <div
             onClick={() => window.open("https://github.com/ksanjeeb/MIT-Scratch-Blockly", "_blank")}
             title='Get the code! - github.com/ksanjeeb'

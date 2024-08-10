@@ -16,7 +16,7 @@ function App() {
               <div className="flex-1 h-screen overflow-hidden flex flex-row bg-neutral-800	 border-t border-r border-neutral-600 rounded-tr-xl ">
                 <Playground />
               </div>
-              <div className="w-2/4 h-screen overflow-hidden flex flex-row bg-neutral-700	 border-t border-l border-neutral-600 rounded-tl-xl ml-2">
+              <div className="w-1/3 h-screen overflow-hidden flex flex-row bg-neutral-700	 border-t border-l border-neutral-600 rounded-tl-xl ml-2">
                 <PreviewArea />
               </div>
             </div>
