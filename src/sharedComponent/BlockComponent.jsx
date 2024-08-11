@@ -2,6 +2,8 @@
 /* eslint-disable react/prop-types */
 import { Flag, GripHorizontal } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Draggable } from 'react-beautiful-dnd';
+// import { Draggable } from 'react-beautiful-dnd';
 
 function BlockComponent({ type, category, id, initialValue, onAction }) {
     const [values, setValues] = useState(initialValue);
@@ -137,10 +139,17 @@ function BlockComponent({ type, category, id, initialValue, onAction }) {
     };
 
     return (
-        <div className={`p-2 mb-4 ${returnColor()} text-sm rounded-lg shadow-lg w-fit flex flex-row gap-1`} id={id}>
-            <GripHorizontal size={20} color={category === "events"?'black':'white'} className='self-center'/>
-            {renderBlockContent()}
-        </div>
+        <Draggable draggableId={id} index={id}>
+            {(provided) => {
+                    <div className={`p-2 mb-4 ${returnColor()} text-sm rounded-lg shadow-lg w-fit flex flex-row gap-1`} id={id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
+                        <GripHorizontal size={20} color={category === "events" ? 'black' : 'white'} className='self-center' />
+                        {renderBlockContent()}
+                    </div>
+                }
+            }
+
+        </Draggable>
+
     );
 }
 

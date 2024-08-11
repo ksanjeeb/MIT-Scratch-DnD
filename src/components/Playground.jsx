@@ -1,8 +1,11 @@
 import { PackagePlus } from "lucide-react";
 import { Droppable } from "react-beautiful-dnd";
 import BlockComponent from "../sharedComponent/BlockComponent";
+import { useState } from "react";
 
 function Playground({ ...props }) {
+
+    const [groups, setGroups] = useState([[]])
 
     const initialValues = {
         x: 10,
@@ -13,18 +16,20 @@ function Playground({ ...props }) {
         size: 50,
     };
 
+    // console.log(groups)
+
     return (
         <div className="p-4 w-full">
             <div className="flex flex-row justify-between mr-4">
                 <div className='h-12 w-28 flex items-center self-center'>
                     <img src='/scratch.png' alt="Scratch Logo" className='h-full w-full object-contain' />
                 </div>
-                <div className="self-center cursor-pointer border-1 rounded-md p-1 text-white flex flex-row gap-2 border-white">
+                <div className="self-center cursor-pointer border-1 rounded-md p-1 text-white flex flex-row gap-2 border-white" onClick={()=>setGroups([...groups, []])}>
                     Add Group
                     <PackagePlus color="white" />
                 </div>
             </div>
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-2 mt-6">
                 <div id="draggable_container">
                     <BlockComponent
                         type="move"
@@ -109,15 +114,16 @@ function Playground({ ...props }) {
                         id={Date.now().toString(16)}
                     />
                 </div>
-                <div id="droppable_container">
-                    {[...Array(5)].map((el, index) => <Droppable droppableId={"block-list-" + index} key={index} className="border-2 border-black">
-                        {(provided) => {
-                            <div className="action-blocks " ref={provided.innerRef} {...provided.droppableProps}>
+                <div id="droppable_container" >
+                    {groups.map((el, index) =>
+                        <div key={index} className="bg-neutral-600 w-24 rounded-md"><Droppable droppableId={"block-list-" + index} className="border-2 border-black">
+                            {(provided) => {
+                                <div className="action-blocks " ref={provided.innerRef} {...provided.droppableProps}>
 
-                            </div>
-                        }
-                        }
-                    </Droppable>)
+                                </div>
+                            }
+                            }
+                        </Droppable></div>)
                     }
 
                 </div>
