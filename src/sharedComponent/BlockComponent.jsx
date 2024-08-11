@@ -1,41 +1,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { Flag, GripHorizontal } from 'lucide-react';
+import { Flag, GripHorizontal, Play } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-function BlockComponent({ type, category, initialValue, onAction }) {
-    const [values, setValues] = useState(initialValue);
+function BlockComponent({ type, category, initialValue, onAction , onClickAction}) {
+    const [values] = useState(initialValue);
 
-    const handleInputChange = ({ target: { name, value } }) => {
-        setValues((prevValues) => ({
-            ...prevValues,
-            [name]: value,
-        }));
-    };
+    // const handleInputChange = ({ target: { name, value } }) => {
+    //     setValues((prevValues) => ({
+    //         ...prevValues,
+    //         [name]: value,
+    //     }));
+    // };
 
     useEffect(() => {
-        if (typeof onAction === "function") onAction({  type: type, values: values })
+        if (typeof onAction === "function") onAction({ type: type, values: values })
     }, [values])
 
     const renderBlockContent = () => {
-        const inputProps = {
-            type: 'number',
-            onChange: handleInputChange,
-            className: 'w-14 rounded pl-2',
-        };
-
-        const textInputProps = {
-            type: 'text',
-            onChange: handleInputChange,
-            className: 'w-16 rounded pl-2',
-        };
-
         switch (type) {
             case 'move':
                 return (
                     <div className="flex items-center space-x-2">
                         <span className='text-gray-300 font-semibold'>move</span>
-                        <input name="x" value={values.x} {...inputProps} />
+                        <div className='w-8 text-center font-bold'>{values.x}</div>
                         <span className='text-gray-300 font-semibold'>steps</span>
                     </div>
                 );
@@ -44,7 +32,7 @@ function BlockComponent({ type, category, initialValue, onAction }) {
                 return (
                     <div className="flex items-center space-x-2">
                         <span className='text-gray-300 font-semibold'>turn {type === 'clockwise' ? '⟳' : '⟲'}</span>
-                        <input name="rotation" value={values.rotation} {...inputProps} />
+                        <div className='w-8 text-center font-bold'>{values.rotation}</div>
                         <span className='text-gray-300 font-semibold'>degrees</span>
                     </div>
                 );
@@ -52,20 +40,20 @@ function BlockComponent({ type, category, initialValue, onAction }) {
                 return (
                     <div className="flex items-center space-x-2">
                         <span className='text-gray-300 font-semibold'>go to x:</span>
-                        <input name="x" value={values.x} {...inputProps} />
+                        <div className='w-8 text-center font-bold'>{values.x}</div>
                         <span className='text-gray-300 font-semibold'>y:</span>
-                        <input name="y" value={values.y} {...inputProps} />
+                        <div className='w-8 text-center font-bold'>{values.y}</div>
                     </div>
                 );
             case 'glide':
                 return (
                     <div className="flex items-center space-x-2">
                         <span className='text-gray-300 font-semibold'>glide</span>
-                        <input name="delay" value={values.delay} {...inputProps} className="w-12" />
+                        <div className='w-12 text-center font-bold'>{values.delay}</div>
                         <span className='text-gray-300 font-semibold'>secs to x:</span>
-                        <input name="x" value={values.x} {...inputProps} />
+                        <div className='w-8 text-center font-bold'>{values.x}</div>
                         <span className='text-gray-300 font-semibold'>y:</span>
-                        <input name="y" value={values.y} {...inputProps} />
+                        <div className='w-8 text-center font-bold'>{values.y}</div>
                     </div>
                 );
             case 'random':
@@ -84,9 +72,9 @@ function BlockComponent({ type, category, initialValue, onAction }) {
                 return (
                     <div className="flex items-center space-x-2">
                         <span className='text-gray-300 font-semibold'>say</span>
-                        <input name="message" value={values.message} {...textInputProps} />
+                        <div className='w-16 text-center font-bold'>{values.message}</div>
                         <span className='text-gray-300 font-semibold'>for</span>
-                        <input name="delay" value={values.delay} {...inputProps} />
+                        <div className='w-8 text-center font-bold'>{values.delay}</div>
                         <span className='text-gray-300 font-semibold'>secs</span>
                     </div>
                 );
@@ -94,14 +82,14 @@ function BlockComponent({ type, category, initialValue, onAction }) {
                 return (
                     <div className="flex items-center space-x-2">
                         <span className='text-gray-300 font-semibold'>say</span>
-                        <input name="message" value={values.message} {...textInputProps} />
+                        <div className='w-16 text-center font-bold'>{values.message}</div>
                     </div>
                 );
             case 'change_size':
                 return (
                     <div className="flex items-center space-x-2">
                         <span className='text-gray-300 font-semibold'>change size by</span>
-                        <input name="size" value={values.size} {...textInputProps} />
+                        <div className='w-16 text-center font-bold'>{values.size}</div>
                     </div>
                 );
             case 'flag_clicked':
@@ -138,8 +126,9 @@ function BlockComponent({ type, category, initialValue, onAction }) {
 
     return (
         <div
-            className={`p-2 mb-4 ${returnColor()} text-sm rounded-lg shadow-lg w-fit flex flex-row gap-1`}
+            className={`p-2 mb-4 ${returnColor()} text-sm rounded-lg shadow-lg w-fit flex flex-row gap-1 active:outline ring-offset-2 active:ring ring-blue-500`}
             // id={type}
+            onClick={()=>onClickAction(type)}
         >
             <GripHorizontal
                 size={20}
@@ -147,20 +136,10 @@ function BlockComponent({ type, category, initialValue, onAction }) {
                 className="self-center"
             />
             {renderBlockContent()}
+        
         </div>
     );
 }
 
-
-BlockComponent.defaultProps = {
-    initialValue: {
-        x: 0,
-        y: 0,
-        delay: 0,
-        rotation: 0,
-        message: '',
-        size: 0,
-    },
-};
 
 export default BlockComponent;

@@ -19,9 +19,9 @@ const blockData = [
     { type: "sprite_clicked", category: "events", initialValue: {} },
 ];
 
+
 function Playground() {
     const [groups, setGroups] = useState([{ items: [] }]);
-    const [initialBlock, setInitialBlock] = useState(blockData);
 
     const onDragEnd = (result) => {
         const { source, destination } = result;
@@ -30,40 +30,35 @@ function Playground() {
 
         const sourceGroupIndex = parseInt(source.droppableId.split('-')[1], 10);
         const destinationGroupIndex = parseInt(destination.droppableId.split('-')[1], 10);
+        console.log(source, destination)
+        // if (source.droppableId === destination.droppableId) {
+        //     // Reorder within the same group
+        //     const items = Array.from(groups[sourceGroupIndex]?.items || []);
+        //     const [movedItem] = items.splice(source.index, 1);
+        //     items.splice(destination.index, 0, movedItem);
 
-        if (source.droppableId === destination.droppableId) {
-            // Reorder within the same group
-            const items = Array.from(groups[sourceGroupIndex]?.items || []);
-            const [movedItem] = items.splice(source.index, 1);
-            items.splice(destination.index, 0, movedItem);
+        //     const newGroups = [...groups];
+        //     newGroups[sourceGroupIndex] = { items };
+        //     setGroups(newGroups);
+        // } else {
+        //     // Move between different groups
+        //     const sourceItems = Array.from(groups[sourceGroupIndex]?.items || []);
+        //     const [movedItem] = sourceItems.splice(source.index, 1);
 
-            const newGroups = [...groups];
-            newGroups[sourceGroupIndex] = { items };
-            setGroups(newGroups);
-        } else {
-            // Move between different groups
-            const sourceItems = Array.from(groups[sourceGroupIndex]?.items || []);
-            const [movedItem] = sourceItems.splice(source.index, 1);
+        //     const destinationItems = Array.from(groups[destinationGroupIndex]?.items || []);
+        //     destinationItems.splice(destination.index, 0, movedItem);
 
-            const destinationItems = Array.from(groups[destinationGroupIndex]?.items || []);
-            destinationItems.splice(destination.index, 0, movedItem);
-
-            const newGroups = [...groups];
-            newGroups[sourceGroupIndex] = { items: sourceItems };
-            newGroups[destinationGroupIndex] = { items: destinationItems };
-            setGroups(newGroups);
-        }
+        //     const newGroups = [...groups];
+        //     newGroups[sourceGroupIndex] = { items: sourceItems };
+        //     newGroups[destinationGroupIndex] = { items: destinationItems };
+        //     setGroups(newGroups);
+        // }
     };
 
-    const handleChangeAction = ({ type, values }) => {
-        const updatedGroups = groups.map(group => ({
-            ...group,
-            items: group.items.map(item => 
-                item.type === type ? { ...item, ...values } : item
-            )
-        }));
-        setGroups(updatedGroups);
-    };
+    const handleClickAction =(event)=>{
+        console.log(event)
+    }
+
 
     return (
         <div className="p-4 w-full">
@@ -88,7 +83,7 @@ function Playground() {
                                 {...provided.droppableProps}
                                 className="draggable_container"
                             >
-                                {initialBlock.map((block, index) => (
+                                {blockData.map((block, index) => (
                                     <Draggable
                                         key={block.type}
                                         draggableId={block.type}
@@ -104,7 +99,7 @@ function Playground() {
                                                     type={block.type}
                                                     category={block.category}
                                                     initialValue={block.initialValue || {}}
-                                                    onAction={handleChangeAction}
+                                                    onClickAction={handleClickAction}
                                                 />
                                             </div>
                                         )}
@@ -144,7 +139,7 @@ function Playground() {
                                                             type={item.type}
                                                             category={item.category}
                                                             initialValue={item.initialValue || {}}
-                                                            onAction={handleChangeAction}
+                                                            onClickAction={handleClickAction}
                                                         />
                                                     </div>
                                                 )}
