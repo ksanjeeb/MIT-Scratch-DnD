@@ -110,7 +110,7 @@ function Playground() {
                         )}
                     </Droppable>
 
-                    <div className="flex flex-col gap-2 mt-6 w-full mx-4">
+                    <div className="flex flex-row flex-wrap gap-2 mt-6 w-full mx-4">
                         {groups.map((group, groupIndex) => (
                             <Droppable
                                 key={groupIndex}
@@ -120,7 +120,7 @@ function Playground() {
                                     <div
                                         ref={provided.innerRef}
                                         {...provided.droppableProps}
-                                        className="bg-neutral-700 w-full p-4 min-h-44 rounded-md droppable_area"
+                                        className="bg-neutral-700 w-fit p-4 min-h-44 rounded-md droppable_area"
                                     >
                                         {group.items.length === 0 && <p className="font-bold text-xl text-white">Place block here</p>}
                                         {group.items.map((item, index) => (
