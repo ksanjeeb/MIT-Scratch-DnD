@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { PackagePlus } from "lucide-react";
 import BlockComponent from "../sharedComponent/BlockComponent";
 import { Droppable, Draggable, DragDropContext } from "react-beautiful-dnd";
@@ -32,36 +32,38 @@ function Playground() {
         const destinationGroupIndex = parseInt(destination.droppableId.split('-')[1], 10);
 
         if (source.droppableId === destination.droppableId) {
-            console.log(source, destination)
-            // const items = Array.from(groups[sourceGroupIndex]?.items || []);
-            // const [movedItem] = items.splice(source.index, 1);
-            // items.splice(destination.index, 0, movedItem);
+            // Reorder within the same group
+            const items = Array.from(groups[sourceGroupIndex]?.items || []);
+            const [movedItem] = items.splice(source.index, 1);
+            items.splice(destination.index, 0, movedItem);
 
-            // const newGroups = [...groups];
-            // newGroups[sourceGroupIndex] = { items };
-            // console.log(newGroups)
-
-            // setGroups(newGroups);
+            const newGroups = [...groups];
+            newGroups[sourceGroupIndex] = { items };
+            setGroups(newGroups);
         } else {
-            console.log(source, destination)
+            // Move between different groups
+            const sourceItems = Array.from(groups[sourceGroupIndex]?.items || []);
+            const [movedItem] = sourceItems.splice(source.index, 1);
 
-            // const sourceItems = Array.from(groups[sourceGroupIndex]?.items || []);
-            // const [movedItem] = sourceItems.splice(source.index, 1);
+            const destinationItems = Array.from(groups[destinationGroupIndex]?.items || []);
+            destinationItems.splice(destination.index, 0, movedItem);
 
-            // const destinationItems = Array.from(groups[destinationGroupIndex]?.items || []);
-            // destinationItems.splice(destination.index, 0, movedItem);
-
-            // const newGroups = [...groups];
-            // newGroups[sourceGroupIndex] = { items: sourceItems };
-            // newGroups[destinationGroupIndex] = { items: destinationItems };
-            // console.log(newGroups)
-            // setGroups(newGroups);
+            const newGroups = [...groups];
+            newGroups[sourceGroupIndex] = { items: sourceItems };
+            newGroups[destinationGroupIndex] = { items: destinationItems };
+            setGroups(newGroups);
         }
     };
 
-    const handleChangeAction =(data)=>{
-        console.log(data)
-    }
+    const handleChangeAction = ({ type, values }) => {
+        const updatedGroups = groups.map(group => ({
+            ...group,
+            items: group.items.map(item => 
+                item.type === type ? { ...item, ...values } : item
+            )
+        }));
+        setGroups(updatedGroups);
+    };
 
     return (
         <div className="p-4 w-full">
@@ -123,9 +125,9 @@ function Playground() {
                                     <div
                                         ref={provided.innerRef}
                                         {...provided.droppableProps}
-                                        className="bg-neutral-700 w-full p-4 min-h-44  rounded-md droppable_area"
+                                        className="bg-neutral-700 w-full p-4 min-h-44 rounded-md droppable_area"
                                     >
-                                        {group.items.length === 0 && <p className="font-bold text-xl  text-white">Place block here</p>}
+                                        {group.items.length === 0 && <p className="font-bold text-xl text-white">Place block here</p>}
                                         {group.items.map((item, index) => (
                                             <Draggable
                                                 key={`${item.type}-${index}`}
@@ -138,13 +140,12 @@ function Playground() {
                                                         {...provided.draggableProps}
                                                         {...provided.dragHandleProps}
                                                     >
-                                                        <div>Hello</div>
-                                                        {/* <BlockComponent
+                                                        <BlockComponent
                                                             type={item.type}
                                                             category={item.category}
                                                             initialValue={item.initialValue || {}}
-                                                            onAction={item.onAction}
-                                                        /> */}
+                                                            onAction={handleChangeAction}
+                                                        />
                                                     </div>
                                                 )}
                                             </Draggable>
