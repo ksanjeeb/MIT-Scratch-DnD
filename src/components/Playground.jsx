@@ -1,133 +1,162 @@
+import React, { useState } from "react";
 import { PackagePlus } from "lucide-react";
-import { Droppable } from "react-beautiful-dnd";
 import BlockComponent from "../sharedComponent/BlockComponent";
-import { useState } from "react";
+import { Droppable, Draggable, DragDropContext } from "react-beautiful-dnd";
 
-function Playground({ ...props }) {
+const blockData = [
+    { type: "move", category: "motion", initialValue: { x: 10, y: 0 } },
+    { type: "clockwise", category: "motion", initialValue: { x: 0, y: 0, rotation: 15 } },
+    { type: "anticlockwise", category: "motion", initialValue: { x: 10, y: 10, rotation: 15 } },
+    { type: "go_to", category: "motion", initialValue: { delay: 1, x: 10, y: 10, rotation: 15, message: "", size: 0 } },
+    { type: "glide", category: "motion", initialValue: { size: 0, delay: 1, x: 10, y: 10, rotation: 15 }, onAction: "consoleLog" },
+    { type: "random", category: "motion", initialValue: { x: 0, y: 0 } },
+    { type: "mouse_pointer", category: "motion", initialValue: {} },
+    { type: "say_for_seconds", category: "looks", initialValue: { size: 0, delay: 1, message: "Hello" } },
+    { type: "say", category: "looks", initialValue: { delay: 1, rotation: 0, size: 0, message: "Hello" } },
+    { type: "change_size", category: "looks", initialValue: { x: 0, y: 0, delay: 0, rotation: 0, size: 2, message: "" } },
+    { type: "flag_clicked", category: "events", initialValue: {} },
+    { type: "space_clicked", category: "events", initialValue: {} },
+    { type: "sprite_clicked", category: "events", initialValue: {} },
+];
 
-    const [groups, setGroups] = useState([[]])
+function Playground() {
+    const [groups, setGroups] = useState([{ items: [] }]);
+    const [initialBlock, setInitialBlock] = useState(blockData);
 
-    const initialValues = {
-        x: 10,
-        y: 20,
-        delay: 5,
-        rotation: 90,
-        message: 'Hello!',
-        size: 50,
+    const onDragEnd = (result) => {
+        const { source, destination } = result;
+
+        if (!destination) return;
+
+        const sourceGroupIndex = parseInt(source.droppableId.split('-')[1], 10);
+        const destinationGroupIndex = parseInt(destination.droppableId.split('-')[1], 10);
+
+        if (source.droppableId === destination.droppableId) {
+            console.log(source, destination)
+            // const items = Array.from(groups[sourceGroupIndex]?.items || []);
+            // const [movedItem] = items.splice(source.index, 1);
+            // items.splice(destination.index, 0, movedItem);
+
+            // const newGroups = [...groups];
+            // newGroups[sourceGroupIndex] = { items };
+            // console.log(newGroups)
+
+            // setGroups(newGroups);
+        } else {
+            console.log(source, destination)
+
+            // const sourceItems = Array.from(groups[sourceGroupIndex]?.items || []);
+            // const [movedItem] = sourceItems.splice(source.index, 1);
+
+            // const destinationItems = Array.from(groups[destinationGroupIndex]?.items || []);
+            // destinationItems.splice(destination.index, 0, movedItem);
+
+            // const newGroups = [...groups];
+            // newGroups[sourceGroupIndex] = { items: sourceItems };
+            // newGroups[destinationGroupIndex] = { items: destinationItems };
+            // console.log(newGroups)
+            // setGroups(newGroups);
+        }
     };
 
-    // console.log(groups)
+    const handleChangeAction =(data)=>{
+        console.log(data)
+    }
 
     return (
         <div className="p-4 w-full">
             <div className="flex flex-row justify-between mr-4">
-                <div className='h-12 w-28 flex items-center self-center'>
-                    <img src='/scratch.png' alt="Scratch Logo" className='h-full w-full object-contain' />
+                <div className="h-12 w-28 flex items-center self-center">
+                    <img src="/scratch.png" alt="Scratch Logo" className="h-full w-full object-contain" />
                 </div>
-                <div className="self-center cursor-pointer border-1 rounded-md p-1 text-white flex flex-row gap-2 border-white" onClick={()=>setGroups([...groups, []])}>
+                <div
+                    className="self-center cursor-pointer border-1 rounded-md p-1 text-white flex flex-row gap-2 border-white"
+                    onClick={() => setGroups([...groups, { items: [] }])}
+                >
                     Add Group
                     <PackagePlus color="white" />
                 </div>
             </div>
-            <div className="flex flex-row gap-2 mt-6">
-                <div id="draggable_container">
-                    <BlockComponent
-                        type="move"
-                        category="motion"
-                        id={Date.now().toString(16)}
-                        initialValue={{ ...initialValues, y: 0 }} // Customize values as needed
-                    />
-                    <BlockComponent
-                        type="clockwise"
-                        category="motion"
-                        id={Date.now().toString(16)}
+            <DragDropContext onDragEnd={onDragEnd}>
+                <div className="flex flex-row gap-4 mt-6">
+                    <Droppable droppableId="draggableItems" isDropDisabled={true}>
+                        {(provided) => (
+                            <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className="draggable_container"
+                            >
+                                {initialBlock.map((block, index) => (
+                                    <Draggable
+                                        key={block.type}
+                                        draggableId={block.type}
+                                        index={index}
+                                    >
+                                        {(provided) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                            >
+                                                <BlockComponent
+                                                    type={block.type}
+                                                    category={block.category}
+                                                    initialValue={block.initialValue || {}}
+                                                    onAction={handleChangeAction}
+                                                />
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
 
-                        initialValue={{ ...initialValues, x: 0, y: 0 }} // Customize values as needed
-                    />
-                    <BlockComponent
-                        type="anticlockwise"
-                        category="motion"
-                        id={Date.now().toString(16)}
-
-                        initialValue={{ ...initialValues, x: 0, y: 0 }} // Customize values as needed
-                    />
-                    <BlockComponent
-                        type="go_to"
-                        category="motion"
-                        id={Date.now().toString(16)}
-
-                        initialValue={{ ...initialValues, delay: 0, rotation: 0, message: '', size: 0 }}
-                    />
-                    <BlockComponent
-                        type="glide"
-                        category="motion"
-                        id={Date.now().toString(16)}
-                        initialValue={{ ...initialValues, size: 0 }}
-                        onAction={(event) => console.log(event)}
-                    />
-                    <BlockComponent
-                        type="random"
-                        id={Date.now().toString(16)}
-                        category="motion"
-                    />
-                    <BlockComponent
-                        type="mouse_pointer"
-                        id={Date.now().toString(16)}
-
-                        category="motion"
-                    />
-                    <BlockComponent
-                        type="say_for_seconds"
-                        category="looks"
-                        id={Date.now().toString(16)}
-                        initialValue={{ ...initialValues, size: 0 }} // Customize values as needed
-                    />
-                    <BlockComponent
-                        type="say"
-                        category="looks"
-                        id={Date.now().toString(16)}
-
-                        initialValue={{ ...initialValues, delay: 0, rotation: 0, size: 0 }} // Customize values as needed
-                    />
-                    <BlockComponent
-                        type="change_size"
-                        category="looks"
-                        id={Date.now().toString(16)}
-
-                        initialValue={{ ...initialValues, x: 0, y: 0, delay: 0, rotation: 0, message: '' }} // Customize values as needed
-                    />
-                    <BlockComponent
-                        type="flag_clicked"
-                        category="events"
-                        id={Date.now().toString(16)}
-
-                    />
-                    <BlockComponent
-                        type="space_clicked"
-                        category="events"
-                        id={Date.now().toString(16)}
-
-                    />
-                    <BlockComponent
-                        type="sprite_clicked"
-                        category="events"
-                        id={Date.now().toString(16)}
-                    />
+                    <div className="flex flex-col gap-2 mt-6 w-full mx-4">
+                        {groups.map((group, groupIndex) => (
+                            <Droppable
+                                key={groupIndex}
+                                droppableId={`droppableGroup-${groupIndex}`}
+                            >
+                                {(provided) => (
+                                    <div
+                                        ref={provided.innerRef}
+                                        {...provided.droppableProps}
+                                        className="bg-neutral-700 w-full p-4 min-h-44  rounded-md droppable_area"
+                                    >
+                                        {group.items.length === 0 && <p className="font-bold text-xl  text-white">Place block here</p>}
+                                        {group.items.map((item, index) => (
+                                            <Draggable
+                                                key={`${item.type}-${index}`}
+                                                draggableId={`${item.type}-${index}`}
+                                                index={index}
+                                            >
+                                                {(provided) => (
+                                                    <div
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                    >
+                                                        <div>Hello</div>
+                                                        {/* <BlockComponent
+                                                            type={item.type}
+                                                            category={item.category}
+                                                            initialValue={item.initialValue || {}}
+                                                            onAction={item.onAction}
+                                                        /> */}
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </div>
+                                )}
+                            </Droppable>
+                        ))}
+                    </div>
                 </div>
-                <div id="droppable_container" >
-                    {groups.map((el, index) =>
-                        <div key={index} className="bg-neutral-600 w-24 rounded-md"><Droppable droppableId={"block-list-" + index} className="border-2 border-black">
-                            {(provided) => {
-                                <div className="action-blocks " ref={provided.innerRef} {...provided.droppableProps}>
-
-                                </div>
-                            }
-                            }
-                        </Droppable></div>)
-                    }
-
-                </div>
-            </div>
+            </DragDropContext>
         </div>
     );
 }

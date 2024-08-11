@@ -2,10 +2,8 @@
 /* eslint-disable react/prop-types */
 import { Flag, GripHorizontal } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Draggable } from 'react-beautiful-dnd';
-// import { Draggable } from 'react-beautiful-dnd';
 
-function BlockComponent({ type, category, id, initialValue, onAction }) {
+function BlockComponent({ type, category, initialValue, onAction }) {
     const [values, setValues] = useState(initialValue);
 
     const handleInputChange = ({ target: { name, value } }) => {
@@ -16,7 +14,7 @@ function BlockComponent({ type, category, id, initialValue, onAction }) {
     };
 
     useEffect(() => {
-        if (typeof onAction === "function") onAction({ id: id, type: type, values: values })
+        if (typeof onAction === "function") onAction({  type: type, values: values })
     }, [values])
 
     const renderBlockContent = () => {
@@ -139,17 +137,17 @@ function BlockComponent({ type, category, id, initialValue, onAction }) {
     };
 
     return (
-        <Draggable draggableId={id} index={id}>
-            {(provided) => {
-                    <div className={`p-2 mb-4 ${returnColor()} text-sm rounded-lg shadow-lg w-fit flex flex-row gap-1`} id={id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
-                        <GripHorizontal size={20} color={category === "events" ? 'black' : 'white'} className='self-center' />
-                        {renderBlockContent()}
-                    </div>
-                }
-            }
-
-        </Draggable>
-
+        <div
+            className={`p-2 mb-4 ${returnColor()} text-sm rounded-lg shadow-lg w-fit flex flex-row gap-1`}
+            // id={type}
+        >
+            <GripHorizontal
+                size={20}
+                color={category === "events" ? 'black' : 'white'}
+                className="self-center"
+            />
+            {renderBlockContent()}
+        </div>
     );
 }
 

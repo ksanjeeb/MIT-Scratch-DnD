@@ -1,4 +1,3 @@
-import { DragDropContext } from 'react-beautiful-dnd';
 import PreviewArea from './components/PreviewArea'
 import { createContext, useState } from 'react';
 import Playground from './components/Playground';
@@ -7,10 +6,13 @@ export const GlobalContext = createContext();
 
 function App() {
   const [data, setData] = useState({})
+
+
+
+
   return (
     <>
-        <GlobalContext.Provider value={{ data, setData }}>
-        <DragDropContext onDragEnd={()=>{}}>
+      <GlobalContext.Provider value={{ data, setData }}>
           <div className="bg-neutral-600 font-sans">
             <div className="h-screen overflow-hidden flex flex-row  ">
               <div className="flex-1 h-screen overflow-hidden flex flex-row bg-neutral-800	 border-t border-r border-neutral-600 rounded-tr-xl ">
@@ -21,8 +23,7 @@ function App() {
               </div>
             </div>
           </div>
-          </DragDropContext>
-        </GlobalContext.Provider>
+      </GlobalContext.Provider>
     </>
   )
 }
