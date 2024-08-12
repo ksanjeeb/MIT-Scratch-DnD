@@ -5,16 +5,16 @@ import { Droppable, Draggable, DragDropContext } from "react-beautiful-dnd";
 import { GlobalContext } from "../App";
 
 const blockData = [
-    { type: "move", category: "motion", initialValue: { x: 10, y: 0 } },
-    { type: "clockwise", category: "motion", initialValue: { x: 0, y: 0, rotation: 15 } },
-    { type: "anticlockwise", category: "motion", initialValue: { x: 10, y: 10, rotation: 15 } },
-    { type: "go_to", category: "motion", initialValue: { delay: 1, x: 10, y: 10, rotation: 15, message: "", size: 0 } },
-    { type: "glide", category: "motion", initialValue: { size: 0, delay: 1, x: 10, y: 10, rotation: 15 }, onAction: "consoleLog" },
+    { type: "move", category: "motion", initialValue: { x: 20, y: 0 } },
+    { type: "clockwise", category: "motion", initialValue: { x: 0, y: 0, rotation: 30 } },
+    { type: "anticlockwise", category: "motion", initialValue: { x: 10, y: 10, rotation: 30 } },
+    { type: "go_to", category: "motion", initialValue: { delay: 2, x: 30, y: 30, rotation: 0, message: "", size: 0 } },
+    { type: "glide", category: "motion", initialValue: { size: 0, delay: 2, x: 25, y: 25, rotation: 0 }, onAction: "consoleLog" },
     { type: "random", category: "motion", initialValue: { x: 0, y: 0 } },
     { type: "mouse_pointer", category: "motion", initialValue: {} },
-    { type: "say_for_seconds", category: "looks", initialValue: { size: 0, delay: 1, message: "Hello" } },
+    { type: "say_for_seconds", category: "looks", initialValue: { size: 0, delay: 5, message: "Hello" } },
     { type: "say", category: "looks", initialValue: { delay: 1, rotation: 0, size: 0, message: "Hello" } },
-    { type: "change_size", category: "looks", initialValue: { x: 0, y: 0, delay: 0, rotation: 0, size: 2, message: "" } },
+    { type: "change_size", category: "looks", initialValue: { x: 0, y: 0, delay: 0, rotation: 0, size: 5, message: "" } },
     { type: "flag_clicked", category: "events", initialValue: {} },
     { type: "space_clicked", category: "events", initialValue: {} },
     { type: "sprite_clicked", category: "events", initialValue: {} },
