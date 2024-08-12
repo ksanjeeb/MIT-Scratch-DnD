@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import CatSprite from './CatSprite';
 import Draggable from 'react-draggable';
-import { Flag, Github, RotateCcw, Undo2Icon } from 'lucide-react';
+import { Flag, Github, Play, RotateCcw, Undo2Icon } from 'lucide-react';
 import { GlobalContext } from '../App';
 import { throttle } from 'lodash';
 
@@ -16,6 +16,25 @@ export default function PreviewArea() {
   const [playing, setPlaying] = useState(false);
   const [history, setHistory] = useState([]);
   const mousePositionRef = useRef({ x: 0, y: 0 });
+  const [customInputs, setCustomInputs] = useState({
+    delay: 2,
+    x: 30,
+    y: 30,
+  });
+
+  const handleCustomInputChange = (e) => {
+    const { name, value } = e.target;
+    setCustomInputs({
+      ...customInputs,
+      [name]: value,
+    });
+  };
+
+  const handleCustomSubmit = (e) => {
+    e.preventDefault();
+    setHistory(prev => [...prev, { position, rotation, size, text }]);
+    handleAction("custom_action", customInputs)
+  };
 
   const pointTowardsMouse = () => {
     const rect = document.getElementById("sprite").getBoundingClientRect();
@@ -49,14 +68,14 @@ export default function PreviewArea() {
   }, [data, position, rotation, size, text, animation]);
 
 
-  useEffect(()=>{
-    if(data?.clicked?.type)handleAction(data?.clicked?.type,data?.clicked?.initialValue)
-  },[data.clicked])
+  useEffect(() => {
+    if (data?.clicked?.type) handleAction(data?.clicked?.type, data?.clicked?.initialValue)
+  }, [data.clicked])
 
-  const handleAction = (type, value)=>{
+  const handleAction = (type, value) => {
     switch (type) {
       case 'move':
-        setPosition({ x: position.x + value.x});
+        setPosition({ x: position.x + value.x });
         break;
       case 'go_to':
         setPosition({ x: value.x, y: value.y });
@@ -75,6 +94,11 @@ export default function PreviewArea() {
         setPosition({ x: value.x, y: value.y });
         setTimeout(() => { setAnimation(null) }, value.delay * 1000)
         break;
+      case 'custom_action':
+        setAnimation({ type: 'glide', duration: value.delay * 1000 });
+        setPosition({ x: position.x + value.x, y: position.y + value.y });
+        setTimeout(() => { setAnimation(null) }, value.delay * 1000)
+        break;
       case 'glide_random':
         setAnimation({ type: 'glide', duration: value.delay * 1000 });
         setPosition({ x: Math.random() * 400, y: Math.random() * 400 });
@@ -84,8 +108,8 @@ export default function PreviewArea() {
         setRotation(value.direction);
         break;
       case 'mouse_pointer':
-          setRotation(pointTowardsMouse());
-          setAnimation(null);
+        setRotation(pointTowardsMouse());
+        setAnimation(null);
         break;
       case 'change_x_by':
         setPosition(prev => ({ ...prev, x: prev.x + value.x }));
@@ -124,9 +148,9 @@ export default function PreviewArea() {
   const executeAction = (action_list, index) => {
     const { type, initialValue } = action_list[index];
     setPlaying(true);
-    handleAction( type, initialValue);
+    handleAction(type, initialValue);
     if (action_list && index < action_list.length - 1) {
-      setTimeout(() => executeAction(action_list, index +1), 10);
+      setTimeout(() => executeAction(action_list, index + 1), 10);
     } else {
       setPlaying(false);
     }
@@ -155,10 +179,6 @@ export default function PreviewArea() {
     setAnimation(null);
   };
 
-  // const stop = () => { // This logic is not working as expected
-  //   setPlaying(false);
-  //   setAnimation(null);
-  // };
 
 
 
@@ -239,7 +259,53 @@ export default function PreviewArea() {
             animation={text?.animation}
           />
         </div>
+
       </Draggable>
+      <div className='absolute bottom-0'>
+        <form onSubmit={handleCustomSubmit} className="flex flex-row gap-4 mx-auto  p-4 bg-neutral-600  shadow-lg">
+          <div className="flex flex-col">
+            <label htmlFor="delay" className="text-sm font-medium text-gray-200 mb-2">Delay:</label>
+            <input
+              type="number"
+              id="delay"
+              name="delay"
+              value={customInputs.delay}
+              onChange={handleCustomInputChange}
+              min="0"
+              className="block w-full px-4 py-2 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="x" className="text-sm font-medium text-gray-200 mb-2">Change x by:</label>
+            <input
+              type="number"
+              id="x"
+              name="x"
+              value={customInputs.x}
+              onChange={handleCustomInputChange}
+              className="block w-full px-4 py-2 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="y" className="text-sm font-medium text-gray-200 mb-2">Change y by:</label>
+            <input
+              type="number"
+              id="y"
+              name="y"
+              value={customInputs.y}
+              onChange={handleCustomInputChange}
+              className="block w-full px-4 py-2 border border-gray-700 rounded-md shadow-sm bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+
+          <div className='self-center mt-6 p-2 border-2 rounded-lg border-green-500 cursor-pointer hover:border-green-300' onClick={handleCustomSubmit}>
+            <Play fill='#00ff11' color='#00ff11' size={20} />
+          </div>
+        </form>
+
+      </div>
     </div>
   );
 }

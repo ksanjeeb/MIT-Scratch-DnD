@@ -137,7 +137,7 @@ function Playground() {
                             <div
                                 ref={provided.innerRef}
                                 {...provided.droppableProps}
-                                className="draggable_container"
+                                className="draggable_container h-[calc(100vh_-_6rem)] overflow-y-scroll w-full"
                             >
                                 {blockData.map((block, index) => (
                                     <Draggable
@@ -179,8 +179,8 @@ function Playground() {
                                         className="bg-neutral-700 w-full flex flex-col  p-4 rounded-md droppable_area"
                                     >
                                         {groupIndex > 0 && <div className="self-end cursor-pointer" onClick={()=>handleDelete(groupIndex)} title="Delete this group"><DeleteIcon  color="red"/></div>}
-                                        {group.items.length === 0 && <p className="font-semibold p-44 text-lg text-gray-400">Place block here</p>}
-
+                                        {group.items.length === 0 && <p className="font-semibold py-44 text-lg text-gray-400 text-center">Place block here</p>}
+                                        {group.items.length > 0 && <p className="text-xs text-right text-gray-400 pv-2">* Drag block outside to delete</p>}
                                         {group.items.map((item, index) => (
                                             <Draggable
                                                 key={`${item.type}-${index}`}
