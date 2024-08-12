@@ -212,8 +212,8 @@ export default function PreviewArea() {
             title='Undo'
             className='cursor-pointer self-center flex flex-row gap-1'
           >
-            <p className='font-semibold'>{history.length}</p >
-            <Undo2Icon />
+            <p className='font-semibold text-white'>{history.length}</p >
+            <Undo2Icon color='white'/>
           </div>
         )}
         <div
