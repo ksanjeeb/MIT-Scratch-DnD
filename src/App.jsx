@@ -5,7 +5,7 @@ import Playground from './components/Playground';
 export const GlobalContext = createContext();
 
 function App() {
-  const [data, setData] = useState({})
+  const [data, setData] = useState({groups:[], clicked:{}})
 
 
 
