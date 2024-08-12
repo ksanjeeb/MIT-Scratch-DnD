@@ -87,7 +87,6 @@ export default function PreviewArea() {
         if (value.target === 'MOUSE_POINTER') {
           setRotation(pointTowardsMouse());
           setAnimation(null);
-        }
         break;
       case 'change_x_by':
         setPosition(prev => ({ ...prev, x: prev.x + value.x }));
