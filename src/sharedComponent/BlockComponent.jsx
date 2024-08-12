@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { Flag, GripHorizontal, Play } from 'lucide-react';
+import { Flag, GripHorizontal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 function BlockComponent({ type, category, initialValue, onAction , onClickAction}) {
@@ -127,7 +127,7 @@ function BlockComponent({ type, category, initialValue, onAction , onClickAction
     return (
         <div
             className={`p-2 mb-4 ${returnColor()} text-sm rounded-lg shadow-lg w-fit flex flex-row gap-1 active:outline ring-offset-2 active:ring ring-blue-500`}
-            // id={type}
+            id={Date.now().toString(16)}
             onClick={()=>onClickAction(type)}
         >
             <GripHorizontal

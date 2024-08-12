@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { PackagePlus } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import {  DeleteIcon,  PackagePlus } from "lucide-react";
 import BlockComponent from "../sharedComponent/BlockComponent";
 import { Droppable, Draggable, DragDropContext } from "react-beautiful-dnd";
+import { GlobalContext } from "../App";
 
 const blockData = [
     { type: "move", category: "motion", initialValue: { x: 10, y: 0 } },
@@ -22,41 +23,97 @@ const blockData = [
 
 function Playground() {
     const [groups, setGroups] = useState([{ items: [] }]);
+    const { data, setData } = useContext(GlobalContext);
 
     const onDragEnd = (result) => {
         const { source, destination } = result;
 
-        if (!destination) return;
+        if (!destination) {
+            const sourceGroupIndex = parseInt(source.droppableId.split('-')[1], 10);
+            if (!isNaN(sourceGroupIndex)) {
+                let newGroups = [...groups];
+                newGroups[sourceGroupIndex].items.splice(source.index, 1);
+                setGroups(newGroups);
+            }
+            return;
+        }
 
         const sourceGroupIndex = parseInt(source.droppableId.split('-')[1], 10);
         const destinationGroupIndex = parseInt(destination.droppableId.split('-')[1], 10);
-        console.log(source, destination)
-        // if (source.droppableId === destination.droppableId) {
-        //     // Reorder within the same group
-        //     const items = Array.from(groups[sourceGroupIndex]?.items || []);
-        //     const [movedItem] = items.splice(source.index, 1);
-        //     items.splice(destination.index, 0, movedItem);
 
-        //     const newGroups = [...groups];
-        //     newGroups[sourceGroupIndex] = { items };
-        //     setGroups(newGroups);
-        // } else {
-        //     // Move between different groups
-        //     const sourceItems = Array.from(groups[sourceGroupIndex]?.items || []);
-        //     const [movedItem] = sourceItems.splice(source.index, 1);
 
-        //     const destinationItems = Array.from(groups[destinationGroupIndex]?.items || []);
-        //     destinationItems.splice(destination.index, 0, movedItem);
+        let newGroup = [...groups];
+        if (source.droppableId === destination.droppableId) {
+            if (destination.index === 0) {
+                const exist = newGroup[destinationGroupIndex].items.find(each => each.type === "flag_clicked" || each.type === "space_clicked" || each.type === "sprite_clicked")
+                if (exist) {
+                    return;
+                }
+            }
+            const [movedItem] = newGroup[sourceGroupIndex].items.splice(source.index, 1);
+            if (movedItem?.type === "flag_clicked" || movedItem?.type === "space_clicked" || movedItem?.type === "sprite_clicked") {
+                newGroup[destinationGroupIndex].items.splice(0, 0, movedItem);
+                return;
+            }
 
-        //     const newGroups = [...groups];
-        //     newGroups[sourceGroupIndex] = { items: sourceItems };
-        //     newGroups[destinationGroupIndex] = { items: destinationItems };
-        //     setGroups(newGroups);
-        // }
+            newGroup[destinationGroupIndex].items.splice(destination.index, 0, movedItem);
+
+        } else {
+            if (destination.index === 0) {
+                const exist = newGroup[destinationGroupIndex].items.find(each => each.type === "flag_clicked" || each.type === "space_clicked" || each.type === "sprite_clicked")
+                if (exist) {
+                    alert("Already an action exist so please add it after that.")
+                    return;
+                }
+            }
+            if (!isNaN(sourceGroupIndex) && !isNaN(destinationGroupIndex)) {
+                const blockDetails = newGroup[sourceGroupIndex]?.items?.[source?.index];
+                if (blockDetails?.type === "flag_clicked" || blockDetails?.type === "space_clicked" || blockDetails?.type === "sprite_clicked") {
+                    const exist = newGroup[destinationGroupIndex].items.find(each => each.type === "flag_clicked" || each.type === "space_clicked" || each.type === "sprite_clicked")
+                    if (exist) {
+                        alert("You cann't keep multiple action in the same group")
+                        return;
+                    } else {
+                        newGroup[sourceGroupIndex]?.items.splice(source?.index, 1)
+                        newGroup[destinationGroupIndex].items.splice(0, 0, blockDetails);
+                        return;
+                    }
+                }
+                newGroup[sourceGroupIndex]?.items.splice(source?.index, 1)
+                newGroup[destinationGroupIndex].items.splice(destination.index, 0, blockDetails);
+            } else {
+                const blockDetails = blockData[source?.index]
+                if (blockDetails?.type === "flag_clicked" || blockDetails?.type === "space_clicked" || blockDetails?.type === "sprite_clicked") {
+                    const exist = newGroup[destinationGroupIndex].items.find(each => each.type === "flag_clicked" || each.type === "space_clicked" || each.type === "sprite_clicked")
+                    if (exist) {
+                        alert("You cann't keep multiple action in the same group")
+                        return;
+                    } else {
+                        newGroup[destinationGroupIndex].items.splice(0, 0, blockDetails);
+                        return;
+                    }
+                }
+                newGroup[destinationGroupIndex].items.splice(destination.index, 0, blockDetails);
+            }
+        }
+
+        setGroups(newGroup);
     };
 
-    const handleClickAction =(event)=>{
-        console.log(event)
+    const handleClickAction = (event) => {
+        const getClicked = blockData.find((each) => event === each.type)
+        setData({ ...data, clicked: getClicked })
+    }
+
+    useEffect(() => {
+        setData({ ...data, groups: groups })
+        console.log(groups)
+    }, [groups])
+
+    const handleDelete =(index)=>{
+        let modifiedGroup = [...groups];
+        modifiedGroup.splice(index,1);
+        setGroups(modifiedGroup)
     }
 
 
@@ -110,7 +167,7 @@ function Playground() {
                         )}
                     </Droppable>
 
-                    <div className="flex flex-wrap gap-2 mt-6 w-full mx-4">
+                    <div className="flex flex-col gap-4 mt-6 w-full mx-4 overflow-y-auto h-[calc(100vh_-_10rem)]">
                         {groups.map((group, groupIndex) => (
                             <Droppable
                                 key={groupIndex}
@@ -120,14 +177,15 @@ function Playground() {
                                     <div
                                         ref={provided.innerRef}
                                         {...provided.droppableProps}
-                                        className="bg-neutral-700 w-fit h-fit p-4 min-h-44 rounded-md droppable_area"
+                                        className="bg-neutral-700 w-full flex flex-col  p-4 rounded-md droppable_area"
                                     >
-                                        {group.items.length === 0 && <p className="font-bold pt-10 text-lg text-white">Place block here</p>}
-                                       
+                                        {groupIndex > 0 && <div className="self-end cursor-pointer" onClick={()=>handleDelete(groupIndex)} title="Delete this group"><DeleteIcon  color="red"/></div>}
+                                        {group.items.length === 0 && <p className="font-semibold p-44 text-lg text-gray-400">Place block here</p>}
+
                                         {group.items.map((item, index) => (
                                             <Draggable
                                                 key={`${item.type}-${index}`}
-                                                draggableId={`${item.type}-${index}`}
+                                                draggableId={`${item.type}-${groupIndex}-${index}`}
                                                 index={index}
                                             >
                                                 {(provided) => (
@@ -142,6 +200,8 @@ function Playground() {
                                                             initialValue={item.initialValue || {}}
                                                             onClickAction={handleClickAction}
                                                         />
+                                                        {provided.placeholder}
+
                                                     </div>
                                                 )}
                                             </Draggable>
