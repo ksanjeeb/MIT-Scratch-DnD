@@ -84,7 +84,6 @@ export default function PreviewArea() {
         setRotation(value.direction);
         break;
       case 'mouse_pointer':
-        if (value.target === 'MOUSE_POINTER') {
           setRotation(pointTowardsMouse());
           setAnimation(null);
         break;
