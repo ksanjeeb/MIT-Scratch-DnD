@@ -40,7 +40,6 @@ export default function PreviewArea() {
     let _data = data.groups;
     if (_data && _data.length > 0) {
       const actions = filterByEventType(_data, event_type);
-      console.log(actions)
       if (actions.length > 0) {
         setHistory(prev => [...prev, { position, rotation, size, text }]);
         actions.forEach(action => executeAction(action.items, 1));
@@ -48,78 +47,80 @@ export default function PreviewArea() {
     }
   }, [data, position, rotation, size, text, animation]);
 
-  const executeAction = (action_list, index) => {
-    console.log(action_list)
-    const { type, initialValue } = action_list[index];
-    setPlaying(true);
+  const handleAction = (type, value)=>{
     switch (type) {
       case 'move':
-        setPosition({ x: initialValue.x});
+        setPosition({ x: value.x});
         break;
       case 'go_to':
-        setPosition({ x: initialValue.x, y: initialValue.y });
+        setPosition({ x: value.x, y: value.y });
         break;
       case 'random':
         setPosition({ x: Math.random() * 400, y: Math.random() * 400 });
         break;
       case 'clockwise':
-        setRotation(rotation + initialValue.rotation);
+        setRotation(rotation + value.rotation);
         break;
       case 'anticlockwise':
-        setRotation(rotation - initialValue.rotation);
+        setRotation(rotation - value.rotation);
         break;
       case 'glide':
-        setAnimation({ type: 'glide', duration: initialValue.delay * 1000 });
-        setPosition({ x: initialValue.x, y: initialValue.y });
-        setTimeout(() => { setAnimation(null) }, initialValue.delay * 1000)
+        setAnimation({ type: 'glide', duration: value.delay * 1000 });
+        setPosition({ x: value.x, y: value.y });
+        setTimeout(() => { setAnimation(null) }, value.delay * 1000)
         break;
       case 'glide_random':
-        setAnimation({ type: 'glide', duration: initialValue.delay * 1000 });
+        setAnimation({ type: 'glide', duration: value.delay * 1000 });
         setPosition({ x: Math.random() * 400, y: Math.random() * 400 });
-        setTimeout(() => { setAnimation(null) }, initialValue.seconds * 1000)
+        setTimeout(() => { setAnimation(null) }, value.seconds * 1000)
         break;
       case 'point_in_direction':
-        setRotation(initialValue.direction);
+        setRotation(value.direction);
         break;
       case 'mouse_pointer':
-        if (initialValue.target === 'MOUSE_POINTER') {
+        if (value.target === 'MOUSE_POINTER') {
           setRotation(pointTowardsMouse());
           setAnimation(null);
         }
         break;
       case 'change_x_by':
-        setPosition(prev => ({ ...prev, x: prev.x + initialValue.x }));
+        setPosition(prev => ({ ...prev, x: prev.x + value.x }));
         break;
       case 'set_x':
-        setPosition(prev => ({ ...prev, x: initialValue.x }));
+        setPosition(prev => ({ ...prev, x: value.x }));
         break;
       case 'change_y_by':
-        setPosition(prev => ({ ...prev, y: prev.y + initialValue.y }));
+        setPosition(prev => ({ ...prev, y: prev.y + value.y }));
         break;
       case 'set_y':
-        setPosition(prev => ({ ...prev, y: initialValue.y }));
+        setPosition(prev => ({ ...prev, y: value.y }));
         break;
       case 'say_for_seconds':
-        setText({ message: initialValue.message, duration: initialValue.delay * 1000, animation: false });
-        setTimeout(() => setText({ message: '', duration: 0, animation: false }), initialValue.delay * 1000);
+        setText({ message: value.message, duration: value.delay * 1000, animation: false });
+        setTimeout(() => setText({ message: '', duration: 0, animation: false }), value.delay * 1000);
         break;
       case 'say':
-        setText({ message: initialValue.message, duration: 100, animation: false });
+        setText({ message: value.message, duration: 100, animation: false });
         break;
       case 'think_for_seconds':
-        setText({ message: initialValue.message, duration: initialValue.delay * 1000, animation: true });
-        setTimeout(() => setText({ message: '', duration: 0, animation: false }), initialValue.delay * 1000);
+        setText({ message: value.message, duration: value.delay * 1000, animation: true });
+        setTimeout(() => setText({ message: '', duration: 0, animation: false }), value.delay * 1000);
         break;
       case 'think':
-        setText({ message: initialValue.message, duration: 100, animation: true });
+        setText({ message: value.message, duration: 100, animation: true });
         break;
       case 'change_size':
-        setSize(size + initialValue.size);
+        setSize(size + value.size);
         break;
       default:
         break;
     }
+  }
 
+  const executeAction = (action_list, index) => {
+    const { type, initialValue } = action_list[index];
+    setPlaying(true);
+    handleAction( type, initialValue);
     if (action_list && index < action_list.length - 1) {
       setTimeout(() => executeAction(action_list, index +1), 10);
     } else {
