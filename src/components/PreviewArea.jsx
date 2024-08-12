@@ -233,7 +233,7 @@ export default function PreviewArea() {
           <RotateCcw color='white' />
         </div>
         <div
-          onClick={() => window.open("https://github.com/ksanjeeb/MIT-Scratch-Blockly", "_blank")}
+          onClick={() => window.open("https://github.com/ksanjeeb/MIT-Scratch-DnD", "_blank")}
           title='Get the code! - github.com/ksanjeeb'
           className='cursor-pointer ml-1 bg-gray-200 rounded-xl p-1'
         >
