@@ -26,7 +26,7 @@ export default function PreviewArea() {
     const { name, value } = e.target;
     setCustomInputs({
       ...customInputs,
-      [name]: value,
+      [name]: parseInt(value),
     });
   };
 
@@ -75,64 +75,64 @@ export default function PreviewArea() {
   const handleAction = (type, value) => {
     switch (type) {
       case 'move':
-        setPosition({ x: position.x + value.x });
+        setPosition({ x: position.x + parseInt(value.x) });
         break;
       case 'go_to':
-        setPosition({ x: value.x, y: value.y });
+        setPosition({ x: parseInt(value.x), y: parseInt(value.y) });
         break;
       case 'random':
         setPosition({ x: Math.random() * 400, y: Math.random() * 400 });
         break;
       case 'clockwise':
-        setRotation(rotation + value.rotation);
+        setRotation(rotation + parseInt(value.rotation));
         break;
       case 'anticlockwise':
-        setRotation(rotation - value.rotation);
+        setRotation(rotation - parseInt(value.rotation));
         break;
       case 'glide':
-        setAnimation({ type: 'glide', duration: value.delay * 1000 });
-        setPosition({ x: value.x, y: value.y });
-        setTimeout(() => { setAnimation(null) }, value.delay * 1000)
+        setAnimation({ type: 'glide', duration: parseInt(value.delay) * 1000 });
+        setPosition({ x: parseInt(value.x), y: parseInt(value.y) });
+        setTimeout(() => { setAnimation(null) }, parseInt(value.delay) * 1000)
         break;
       case 'custom_action':
-        setAnimation({ type: 'glide', duration: value.delay * 1000 });
-        setPosition({ x: position.x + value.x, y: position.y + value.y });
-        setTimeout(() => { setAnimation(null) }, value.delay * 1000)
+        setAnimation({ type: 'glide', duration: parseInt(value.delay) * 1000 });
+        setPosition({ x: position.x + value.x, y: position.y + parseInt(value.y) });
+        setTimeout(() => { setAnimation(null) }, parseInt(value.delay) * 1000)
         break;
       case 'glide_random':
-        setAnimation({ type: 'glide', duration: value.delay * 1000 });
+        setAnimation({ type: 'glide', duration: parseInt(value.delay) * 1000 });
         setPosition({ x: Math.random() * 400, y: Math.random() * 400 });
-        setTimeout(() => { setAnimation(null) }, value.seconds * 1000)
+        setTimeout(() => { setAnimation(null) }, parseInt(value.seconds) * 1000)
         break;
       case 'point_in_direction':
-        setRotation(value.direction);
+        setRotation(parseInt(value.direction));
         break;
       case 'mouse_pointer':
         setRotation(pointTowardsMouse());
         setAnimation(null);
         break;
       case 'change_x_by':
-        setPosition(prev => ({ ...prev, x: prev.x + value.x }));
+        setPosition(prev => ({ ...prev, x: prev.x + parseInt(value.x) }));
         break;
       case 'set_x':
-        setPosition(prev => ({ ...prev, x: value.x }));
+        setPosition(prev => ({ ...prev, x: parseInt(value.x) }));
         break;
       case 'change_y_by':
-        setPosition(prev => ({ ...prev, y: prev.y + value.y }));
+        setPosition(prev => ({ ...prev, y: prev.y + parseInt(value.y) }));
         break;
       case 'set_y':
         setPosition(prev => ({ ...prev, y: value.y }));
         break;
       case 'say_for_seconds':
-        setText({ message: value.message, duration: value.delay * 1000, animation: false });
-        setTimeout(() => setText({ message: '', duration: 0, animation: false }), value.delay * 1000);
+        setText({ message: value.message, duration: parseInt(value.delay) * 1000, animation: false });
+        setTimeout(() => setText({ message: '', duration: 0, animation: false }), parseInt(value.delay) * 1000);
         break;
       case 'say':
         setText({ message: value.message, duration: 100, animation: false });
         break;
       case 'think_for_seconds':
-        setText({ message: value.message, duration: value.delay * 1000, animation: true });
-        setTimeout(() => setText({ message: '', duration: 0, animation: false }), value.delay * 1000);
+        setText({ message: value.message, duration: parseInt(value.delay) * 1000, animation: true });
+        setTimeout(() => setText({ message: '', duration: 0, animation: false }), parseInt(value.delay) * 1000);
         break;
       case 'think':
         setText({ message: value.message, duration: 100, animation: true });
