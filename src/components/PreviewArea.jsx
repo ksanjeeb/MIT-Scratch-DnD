@@ -5,6 +5,7 @@ import { Flag, Github, RotateCcw, Undo2Icon } from 'lucide-react';
 import { GlobalContext } from '../App';
 import { throttle } from 'lodash';
 
+
 export default function PreviewArea() {
   const { data } = useContext(GlobalContext);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -47,10 +48,15 @@ export default function PreviewArea() {
     }
   }, [data, position, rotation, size, text, animation]);
 
+
+  useEffect(()=>{
+    if(data?.clicked?.type)handleAction(data?.clicked?.type,data?.clicked?.initialValue)
+  },[data.clicked])
+
   const handleAction = (type, value)=>{
     switch (type) {
       case 'move':
-        setPosition({ x: value.x});
+        setPosition({ x: position.x + value.x});
         break;
       case 'go_to':
         setPosition({ x: value.x, y: value.y });

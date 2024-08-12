@@ -102,12 +102,11 @@ function Playground() {
 
     const handleClickAction = (event) => {
         const getClicked = blockData.find((each) => event === each.type)
-        setData({ ...data, clicked: getClicked })
+        setData({ ...data, clicked: {...getClicked,click_id:Date.now().toString(16) }})
     }
 
     useEffect(() => {
         setData({ ...data, groups: groups })
-        console.log(groups)
     }, [groups])
 
     const handleDelete =(index)=>{
